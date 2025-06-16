@@ -1,4 +1,3 @@
-// src/delete.js
 import { useEffect, useState } from 'react';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
@@ -8,10 +7,10 @@ function DeleteUser() {
 
   // Firestoreからユーザー一覧を取得
   const fetchUsers = async () => {
-    const usersCol = collection(db, 'mydata');
+    const usersCol = collection(db, 'finale');
     const userSnapshot = await getDocs(usersCol);
     const userList = userSnapshot.docs.map(doc => ({
-      id: doc.id,
+      id: doc.id, // データ削除時に必要なdoc.idを追加
       ...doc.data()
     }));
     setUsers(userList);
@@ -27,8 +26,7 @@ function DeleteUser() {
     if (!confirmDelete) return;
 
     try {
-        console.log(id);
-      await deleteDoc(doc(db, 'mydata', id));
+      await deleteDoc(doc(db, 'finale', id)); // IDで特定し削除
       alert('削除しました');
       fetchUsers(); // 再取得
     } catch (error) {
@@ -38,13 +36,17 @@ function DeleteUser() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-center">
-      <h2>ユーザー削除ページ</h2>
+      <h2><strong>ユーザー削除</strong></h2>
       <ul>
         {users.map(user => (
           <li key={user.id}>
-            {user.name} - {user.mail} - {user.dorm ? '寮生' : '通学'}
+            <strong>{user.time} - {user.name} </strong>
             &nbsp;
-            <button onClick={() => deleteUser(user.id)}>削除</button>
+            <button 
+                  onClick={() => deleteUser(user.id)} 
+                  className="text-white bg-green-600 px-2 py-1 rounded">
+                  <strong>削除</strong>
+                </button>
           </li>
         ))}
       </ul>
